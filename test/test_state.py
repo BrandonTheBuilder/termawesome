@@ -14,11 +14,11 @@ class TestState(unittest.TestCase):
         T = 600 #K
         fluid = 'Water'
         testState = State(fluid)
-        testState.defined(T=T, P=P)
+        testState.define(T=T, P=P)
         # I am testing against the value returned the first time
         # just to make sure it is still working, I do not know
         # how else to test this. 
-        val = testState.h - 3126608
+        val = testState.properties['h'] - 3126608
         self.assertAlmostEquals(True, val < 10)
 
 
@@ -27,8 +27,8 @@ class TestState(unittest.TestCase):
         s = 7994 #J/kg
         fluid = 'Water'
         testState = State(fluid)
-        testState.defined(T=T, S=s)
-        val = testState.h - 3126608
+        testState.define(T=T, S=s)
+        val = testState.properties['h'] - 3126608
         self.assertAlmostEquals(True, val < 100)
 
 
@@ -38,7 +38,7 @@ class TestState(unittest.TestCase):
         h = 3126608.7815658785 #J/kg
         fluid = 'Water'
         testState = State(fluid)
-        testState.defined(P=P, H=h)
-        val = testState.s - 7994
+        testState.define(P=P, H=h)
+        val = testState.properties['s'] - 7994
         self.assertAlmostEquals(True, val < 10)
         

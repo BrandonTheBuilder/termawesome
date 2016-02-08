@@ -18,36 +18,36 @@ class State(object):
         s, specific Entropy
         m, specific mass flow rate 
         """
+        self.defined = False
         self.fluid = fluid
-        self.flowRate = None
-        self.h = None
-        self.u = None
-        self.s = None
-        self.v = None
+        self.properties = dict()
         if kwargs is not None:
-            self.__dict__.update(kwargs)
+            self.properties.update(kwargs)
         
 
-
-    def undefined(self, **kwargs):
-        """
-        Undefined state
-        """
-        self.__dict__.update(kwargs)
-
-    def defined(self, **kwargs):
+    def define(self, **kwargs):
         """
         Define the fluid state based off of the inputed properties
         """
         #Make a list of defined properties
         inputProp = []
-        for key in kwargs.keys():
-            inputProp.extend([key, kwargs[key]])
+        if kwargs is not None:
+            self.properties.update(kwargs)
+        for key in self.properties.keys():
+            inputProp.extend([key.capitalize(), self.properties[key]])
         inputProp.append(self.fluid)
-        self.h = CP.PropsSI('H', *inputProp)
-        self.s = CP.PropsSI('S',*inputProp)
-        self.u = CP.PropsSI('U', *inputProp)
-        self.v = 1/CP.PropsSI('D', *inputProp)
+        try:
+            self.properties.update(
+            T = CP.PropsSI('T', *inputProp),
+            P = CP.PropsSI('P', *inputProp),
+            h = CP.PropsSI('H', *inputProp),
+            s = CP.PropsSI('S',*inputProp),
+            u = CP.PropsSI('U', *inputProp),
+            v = 1/CP.PropsSI('D', *inputProp))
+            self.defined = True
+        except:
+            self.defined = False
+            print 'Failed to define'
         
 
     def __add__(self, other):
