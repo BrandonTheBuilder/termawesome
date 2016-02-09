@@ -50,8 +50,8 @@ class CFWH(object):
         self.superHeater = Reheater(self.six, self.one)
         self.eta = (sum([self.turb_one.w, self.turb_two.w, self.pump_one.w])/
                     sum([self.superHeater.q]))
-        self.E = self.eta*(1/(1-TL/TH))
-        self.cfwh = CFeedWater([self.two, self.five], [y, (1-y)], [self.seven, self.six],
+        self.E = self.eta*(1/(1-float(TL)/float(TH)))
+        self.cfwh = CFeedWater([self.two, self.five], [y, 1], [self.seven, self.six],
                     [y, (1-y)], t0, p0)
 
 def cfwh(p_2):
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     pHigh = 100*10**5
     results = []
     int_p = []
-    for x in range(pLow+1000, pHigh-1000, 10000):
+    for x in range(pLow+1, pHigh-1, 10000):
         int_p.append(x/1000)
         results.append(cfwh(x))
 

@@ -8,7 +8,10 @@ class OFeedWater(object):
         self.exergyDestroyed = self.entropyProduced*t0
         self.yf_in = sum([inlets[i].exergy_f(t0, p0)*m_in[i] for i in range(len(m_in))])
         self.yf_out = outlet.exergy_f(t0, p0)*m_out[0]
-        
-        self.ef = (m_in[1]*(self.yf_out - inlets[1].exergy_f(t0, p0))/
-                    m_in[0]*(inlets[0].exergy_f(t0, p0)-self.yf_out))
+        yfo = outlet.exergy_f(t0, p0)
+        yfh = inlets[0].exergy_f(t0, p0)
+        yfc = inlets[1].exergy_f(t0, p0)
+        c = m_in[0]*(yfo - yfc)
+        h = m_in[1]*(yfh-yfo)
+        self.ef = c/h
         self.w = 0

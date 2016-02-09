@@ -9,5 +9,13 @@ class CFeedWater(object):
         self.yf_in = sum(yf_in)
         yf_out = [outlets[i].exergy_f(t0, p0)*m_out[i] for i in range(len(m_out))]
         self.yf_out = sum(yf_out)
-        self.ef = (yf_out[1]-yf_in[1])/(yf_in[0]-yf_out[0])
+        yfh_in = inlets[0].exergy_f(t0, p0)
+        yfh_out = outlets[0].exergy_f(t0, p0)
+        yfc_in = inlets[1].exergy_f(t0, p0)
+        yfc_out = outlets[1].exergy_f(t0, p0)
+        m_h = m_in[0]
+        m_c = m_in[1]
+        a = m_c*(yfc_out-yfc_in)
+        b = m_h*(yfh_in-yfh_out)
+        self.ef = a/b
         self.w = 0

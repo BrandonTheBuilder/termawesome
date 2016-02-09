@@ -43,7 +43,7 @@ class OFWH(object):
         self.superHeater = Reheater(self.seven, self.one)
         self.eta = (sum([self.turb_one.w, self.turb_two.w, self.pump_one.w, self.pump_two.w])/
                     sum([self.superHeater.q]))
-        self.E = self.eta*(1/(1-TL/TH))
+        self.E = self.eta*(1/(1-float(TL)/float(TH)))
         self.ofwh = OFeedWater([self.two, self.five], [y, (1-y)], self.six, [1], t0, p0)
 
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     pHigh = 100*10**5
     results = []
     int_p = []
-    for x in range(pLow+1000, pHigh-1000, 10000):
+    for x in range(pLow+1, pHigh-1, 10000):
         int_p.append(x/1000)
         results.append(ofwh(x))
 
