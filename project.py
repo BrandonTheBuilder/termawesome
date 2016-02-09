@@ -36,8 +36,7 @@ class ReheatedRankine(object):
                     sum([self.reheater.q, self.superHeater.q]))
 
 
-    
-if __name__ == '__main__':
+def reheater():
     p_1 = 100*10**5 # Pa
     t_1 = 620 # K
     p_cond = 10*10**3 # Pa
@@ -47,5 +46,10 @@ if __name__ == '__main__':
     t_3 = 600 # K
     t0 = 300 # K
     p0 = 100*10**3 # Pa
-    cycle = ReheatedRankine(p_1, t_1, p_2, p_cond, eta_t, eta_p, t_3, t0, p0)
+    return ReheatedRankine(p_1, t_1, p_2, p_cond, eta_t, eta_p, t_3, t0, p0)
+
+
+
+if __name__ == '__main__':
+    cycle = reheater()
     import IPython; IPython.embed()

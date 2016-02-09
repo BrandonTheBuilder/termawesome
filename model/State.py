@@ -54,19 +54,19 @@ class State(object):
     def exergy_f(self, t0, p0):
         deadState = State('Water', T=t0, P=p0)
         if deadState.define():
-            self.exergy_f = ((self.properties['h'] - deadState.properties['h']) 
+            self._exergy_f = ((self.properties['h'] - deadState.properties['h']) 
                             -t0*(self.properties['s']-deadState.properties['s']))
-            return self.exergy_f
+            return self._exergy_f
         else:
             return False
         
     def exergy(self, t0, p0):
         deadState = State('Water', T=t0, P=p0)
         if deadState.define():
-            self.exergy = ((self.properties['u'] - deadState.properties['u']) 
+            self._exergy = ((self.properties['u'] - deadState.properties['u']) 
                             +p0*(self.properties['v'] - deadState.properties['v'])
                             -t0*(self.properties['s']-deadState.properties['s']))
-            return self.exergy_f
+            return self._exergy
         else:
             return False
     def __add__(self, other):
