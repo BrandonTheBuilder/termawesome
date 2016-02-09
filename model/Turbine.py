@@ -1,3 +1,5 @@
+import copy
+
 class Turbine(object):
     """
     A process is how a fluid moves between states, processes require certain 
@@ -18,7 +20,8 @@ class Turbine(object):
         """
         self._one = inlet
         self._two = outlet
-        self._twos = outlet
+        # Creating an undefined isentropic state as a copy of the undefined outlet.
+        self._twos = copy.deepcopy(outlet)
 
 
     def isentropic(self, eta):
@@ -27,8 +30,10 @@ class Turbine(object):
         """
         if self._one.defined and not self._two.defined:
             s = self._one.properties['s']
-            self._twos.define(s=s)
-            self.defined = True
+            if self._twos.define(s=s):
+                self.defined = True
+            else:
+                self.defined = False
         # elif self._two.defined and not self._one.defined:
         #     s = self._two.properties['s']
         #     self._ones.define(s=s)
@@ -39,6 +44,22 @@ class Turbine(object):
             self.defined = False
         if self.defined:
             ws = self._one.properties['h']-self._twos.properties['h']
-            h_two = self._one.properties['h']-eta*ws
-            import IPython; IPython.embed()
-            self._two.define(H=h_two)
+            self.w = eta*ws
+            h_two = self._one.properties['h']-self.w
+            self._two.define(h=h_two)
+
+    def exergyBalance(self, t0, p0):
+        if not self.defined:
+            print 'Cannot perform exergy balance on undefined component'
+            return False
+        yf_one = self._one.exergy_f(t0, p0)
+        y_one = self._one.exergy(t0, p0)
+        yf_two = self._two.exergy_f(t0, p0)
+        y_two = self._two.exergy(t0, p0)
+        self.ef = self.w/(yf_one-yf_two)
+        self.dy = y_two-y_one
+        self.entropyProduced = self._two.properties['s'] - self._one.properties['s']
+        self.exergyDestroyed = t0*self.entropyProduced
+        self.exergyDV = p0*(self._two.properties['v']-self._one.properties['v'])
+        self.exergyDQ = self.dy+self.w+self.entropyProduced-self.exergyDV
+        

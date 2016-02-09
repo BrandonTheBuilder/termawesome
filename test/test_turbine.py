@@ -34,6 +34,15 @@ class TestProcess(unittest.TestCase):
         inlet.define()
         turb = Turbine(inlet, outlet)
         turb.isentropic(0.9)
+        self.assertEquals(True, outlet.defined)
+        self.assertEquals(abs(outlet.properties['h']*10**(-3)-1870)<10, True)
+
+    
+    def testExergyBalance(self):
+        inlet = State('Water', Q = 1, P = 10*10**6)
+        outlet = State('Water', P = 10*10**3)
+        inlet.define()
+        turb = Turbine(inlet, outlet)
+        turb.isentropic(0.9)
+        turb.exergyBalance(300, 100*10**3)
         import IPython; IPython.embed()
-        self.assertEquals(True, exit.defined)
-        self.assertEquals(abs(exit.properties['H']-1870)<10, True)

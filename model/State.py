@@ -45,11 +45,30 @@ class State(object):
             u = CP.PropsSI('U', *inputProp),
             v = 1/CP.PropsSI('D', *inputProp))
             self.defined = True
-        except:
+        except Exception as ex:
             self.defined = False
-            print 'Failed to define'
-        
+            print ex
+        return self.defined
 
+
+    def exergy_f(self, t0, p0):
+        deadState = State('Water', T=t0, P=p0)
+        if deadState.define():
+            self.exergy_f = ((self.properties['h'] - deadState.properties['h']) 
+                            -t0*(self.properties['s']-deadState.properties['s']))
+            return self.exergy_f
+        else:
+            return False
+        
+    def exergy(self, t0, p0):
+        deadState = State('Water', T=t0, P=p0)
+        if deadState.define():
+            self.exergy = ((self.properties['u'] - deadState.properties['u']) 
+                            +p0*(self.properties['v'] - deadState.properties['v'])
+                            -t0*(self.properties['s']-deadState.properties['s']))
+            return self.exergy_f
+        else:
+            return False
     def __add__(self, other):
         pass
 
