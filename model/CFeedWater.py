@@ -17,5 +17,5 @@ class CFeedWater(object):
         m_c = m_in[1]
         a = m_c*(yfc_out-yfc_in)
         b = m_h*(yfh_in-yfh_out)
-        self.ef = a/b
+        self.ef = b/a
         self.w = 0

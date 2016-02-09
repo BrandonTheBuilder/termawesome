@@ -36,9 +36,7 @@ class ReheatedRankine(object):
         self.superHeater = Reheater(self._six, self._one)
         self.eta = (sum([self.turb_two.w, self.turb_one.w, self.pump.w])/
                     sum([self.reheater.q, self.superHeater.q]))
-        self.E = (sum([self.turb_two.w, self.turb_one.w, self.pump.w])/
-                    sum([self.reheater.q, self.superHeater.q])*(1-TL/TH))
-
+        self.E = self.eta*(1/(1-float(TL)/float(TH)))
 def reheater(p_2):
     TL = 300
     TH = 650

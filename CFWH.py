@@ -33,7 +33,7 @@ class CFWH(object):
         self.five = State('Water', P=p_1)
         self.pump_one = Pump(self.four, self.five)
         self.pump_one.isentropic(eta_p)
-        self.six = State('Water', P=p_1, T=400)
+        self.six = State('Water', P=p_1, T=350)
         self.six.define()
 
         self.seven = State('Water', P=p_2, Q=0)
@@ -46,7 +46,7 @@ class CFWH(object):
                 /(self.two.properties['h']-self.seven.properties['h']))
         self.y = y
         self.turb_two.exergyBalanceY(t0, p0, y)
-        self.pump_one.exergyBalanceY(t0, p0, y)
+        self.pump_one.exergyBalance(t0, p0)
         self.superHeater = Reheater(self.six, self.one)
         self.eta = (sum([self.turb_one.w, self.turb_two.w, self.pump_one.w])/
                     sum([self.superHeater.q]))
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     pHigh = 100*10**5
     results = []
     int_p = []
-    for x in range(pLow+1, pHigh-1, 10000):
+    for x in range(pLow+1, pHigh-1, 10*10**3):
         int_p.append(x/1000)
         results.append(cfwh(x))
 
