@@ -4,6 +4,8 @@ from model.Turbine import Turbine
 from model.Condensor import Condensor
 from model.Reheater import Reheater
 from model.Pump import Pump
+
+
 # Reheater
 class CFWH(object):
     """
@@ -31,10 +33,11 @@ class CFWH(object):
         self.six = State('Water', P=p_1, Q=0)
         self.six.define()
 
-        self.seven = State('Water', P=p_2)
-        self.pump_two = Pump(self.six, self.seven)
-        self.pump_two.isentropic(eta_p)
-        self.pump_two.exergyBalance(t0, p0)
+        self.seven = State('Water', P=p_2, Q=0)
+        self.seven.define()
+        self.eight = State('Water', P=p_cond, h=self.seven.properties['h'])
+        self.eight.define()
+     
         
         y = ((self.six.properties['h']-self.five.properties['h'])
                 /(self.two.properties['h']-self.seven.properties['h']))
@@ -46,7 +49,7 @@ class CFWH(object):
         self.pump_one.exergyBalanceY(t0, p0, y)
 
         self.superHeater = Reheater(self.seven, self.one)
-        self.eta = (sum([self.turb_one.w, self.turb_two.w, self.pump_one.w, self.pump_two.w])/
+        self.eta = (sum([self.turb_one.w, self.turb_two.w, self.pump_one.w])/
                     sum([self.superHeater.q]))
 
 def cfwh():
