@@ -4,6 +4,8 @@ from model.Turbine import Turbine
 from model.Condensor import Condensor
 from model.Reheater import Reheater
 from model.Pump import Pump
+
+import util.plotting as plot
 # Reheater
 class ReheatedRankine(object):
     """
@@ -56,7 +58,33 @@ if __name__ == '__main__':
     pLow = 10*10**3
     pHigh = 100*10**5
     results = []
+    int_p = []
     for x in range(pLow+1000, pHigh-1000, 10000):
-        results.append((x,reheater(x)))
+        int_p.append(x/1000)
+        results.append(reheater(x))
 
-    import IPython; IPython.embed()
+    thermal = [res.eta for res in results]
+    exergetic = [res.E for res in results]
+
+    idx = thermal.index(max(thermal))
+    print 'Max Thermal Efficiency of {} with an Intermediate pressure of {} kPa'.format(
+            max(thermal), int_p[thermal.index(max(thermal))])
+    print 'Max Exergetic Efficiency of {} with an Intermediate pressure of {} kPa'.format(
+            max(exergetic), int_p[exergetic.index(max(exergetic))])
+    print 'Turbine one: {}'.format(results[idx].turb_one.ef)
+    print 'Turbine two: {}'.format(results[idx].turb_two.ef)
+    print 'Pump: {}'.format(results[idx].pump.ef)
+
+    plot.plotData('Thermal Efficiencies of a Reheater Cycle', 'Intermediate Pressure (kPa)',
+                    'Thermal Efficiency', [int_p, thermal])
+    plot.plotData('Exergetic Efficiencies of a Reheater Cycle', 'Intermediate Pressure (kPa)',
+                    'Exergetic Efficiency', [int_p, exergetic])
+    plot.plotComponent('Reheater Turbine One', [res.turb_one for res in results], int_p)
+    plot.plotComponent('Reheater Turbine Two', [res.turb_two for res in results], int_p)
+    plot.plotComponent('Reheater Pump', [res.pump for res in results], int_p)
+
+
+    
+
+
+

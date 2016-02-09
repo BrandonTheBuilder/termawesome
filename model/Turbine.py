@@ -48,33 +48,31 @@ class Turbine(object):
             h_two = self._one.properties['h']-self.w
             self._two.define(h=h_two)
 
+
     def exergyBalance(self, t0, p0):
         if not self.defined:
             print 'Cannot perform exergy balance on undefined component'
             return False
         yf_one = self._one.exergy_f(t0, p0)
-        y_one = self._one.exergy(t0, p0)
+        self.yf_in = yf_one
         yf_two = self._two.exergy_f(t0, p0)
-        y_two = self._two.exergy(t0, p0)
+        self.yf_out = yf_two
         self.ef = self.w/(yf_one-yf_two)
-        self.dy = y_two-y_one
         self.entropyProduced = self._two.properties['s'] - self._one.properties['s']
         self.exergyDestroyed = t0*self.entropyProduced
-        self.exergyDV = p0*(self._two.properties['v']-self._one.properties['v'])
-        self.exergyDQ = self.dy+self.w+self.entropyProduced-self.exergyDV
+        self.exergyDQ = self.w + yf_two - yf_one + self.exergyDestroyed
+
 
     def exergyBalanceY(self, t0, p0, y):
         if not self.defined:
             print 'Cannot perform exergy balance on undefined component'
             return False
         yf_one = self._one.exergy_f(t0, p0)*(1-y)
-        y_one = self._one.exergy(t0, p0)*(1-y)
+        self.yf_in = yf_one
         yf_two = self._two.exergy_f(t0, p0)*(1-y)
-        y_two = self._two.exergy(t0, p0)*(1-y)
-        self.ef = self.w/(yf_one-yf_two)*(1-y)
-        self.dy = y_two-y_one
+        self.yf_out = yf_two
+        self.w = self.w*(1-y)
+        self.ef = self.w/(yf_one-yf_two)
         self.entropyProduced = self._two.properties['s'] - self._one.properties['s']
         self.exergyDestroyed = t0*self.entropyProduced
-        self.exergyDV = p0*(self._two.properties['v']-self._one.properties['v'])
-        self.exergyDQ = self.dy+self.w+self.entropyProduced-self.exergyDV
-        
+        self.exergyDQ = self.w + yf_two - yf_one + self.exergyDestroyed
