@@ -11,7 +11,7 @@ class ReheatedRankine(object):
     that I need for a project in my Thermo class. Once I am done with the project
     I plan on introducing a much more generica way of developing a cycle
     """
-    def __init__(self, p_1, t_1, p_2, p_cond, eta_t, eta_p,t_3, t0, p0):
+    def __init__(self, p_1, t_1, p_2, p_cond, eta_t, eta_p,t_3, t0, p0, TL, TH):
         self._one = State('Water', P=p_1, T=t_1)
         self._one.define()
         self._two = State('Water', P=p_2)
@@ -34,22 +34,29 @@ class ReheatedRankine(object):
         self.superHeater = Reheater(self._six, self._one)
         self.eta = (sum([self.turb_two.w, self.turb_one.w, self.pump.w])/
                     sum([self.reheater.q, self.superHeater.q]))
+        self.E = (sum([self.turb_two.w, self.turb_one.w, self.pump.w])/
+                    sum([self.reheater.q, self.superHeater.q])*(1-TL/TH))
 
-
-def reheater():
+def reheater(p_2):
+    TL = 300
+    TH = 650
     p_1 = 100*10**5 # Pa
     t_1 = 620 # K
     p_cond = 10*10**3 # Pa
-    p_2 = 10*10**4 # Pa
     eta_t = 0.9
     eta_p = 0.95
     t_3 = 600 # K
     t0 = 300 # K
     p0 = 100*10**3 # Pa
-    return ReheatedRankine(p_1, t_1, p_2, p_cond, eta_t, eta_p, t_3, t0, p0)
+    return ReheatedRankine(p_1, t_1, p_2, p_cond, eta_t, eta_p, t_3, t0, p0, TL, TH)
 
 
 
 if __name__ == '__main__':
-    cycle = reheater()
+    pLow = 10*10**3
+    pHigh = 100*10**5
+    results = []
+    for x in range(pLow+1000, pHigh-1000, 10000):
+        results.append((x,reheater(x)))
+
     import IPython; IPython.embed()
